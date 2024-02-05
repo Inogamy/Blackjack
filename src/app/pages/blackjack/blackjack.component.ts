@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { shuffle } from 'underscore';
 
 @Component({
@@ -14,17 +15,17 @@ export class BlackjackComponent {
   especiales = ['A', 'J', 'Q', 'F']
   deckshuffle: string[] = [];
 
+  puntosJugador = 0;
+  puntosComputadora = 0;
+
 
   constructor() {
     this.crearDeck();
-    console.log(`La baraja ${this.deck}`);
     this.deckshuffle = shuffle(this.deck);
-    console.log(`La baraja combinada ${this.deckshuffle}`)
-    this.pedirCarta()
-    this.valorCarta('JD');
+    this.valorCarta('AD');
   }
 
-  crearDeck(){
+  crearDeck = () => {
     for (let i = 2; i <= 10; i++) {
       for (let tipo of this.tipos) {
         this.deck.push(i + tipo)
@@ -38,28 +39,31 @@ export class BlackjackComponent {
     }
   }
 
-  pedirCarta(){
-    let carta = this.deckshuffle.pop()
-    console.log(`la carta es: ${carta}`)
-    console.log(`la carta es: ${this.deckshuffle}`)
-  }
 
-  valorCarta(carta: string){
+
+  valorCarta(carta: string) {
     let valor = carta.substring(0, carta.length - 1)
-
     let numeroValor = parseInt(valor, 10);
 
-    console.log({ valor })
-
     return (isNaN(numeroValor)) ?
-      ( valor === 'A') ? 11 : 10
-      : numeroValor = numeroValor + 1
-
-    }
-
-
-
+      (valor === 'A') ? 11 : 10
+      : numeroValor = numeroValor + 1;
   }
+
+
+  pedirCarta() {
+    let carta = this.deckshuffle.pop()
+    if (carta) { // Verifica que carta no sea undefined.
+      this.puntosJugador += this.valorCarta(carta); // Usa += para sumar el valor a puntosJugador.
+      console.log(this.puntosJugador);
+    } else {
+      console.log('No hay más cartas en el mazo');
+    }
+  }
+
+
+
+}
 
 
 

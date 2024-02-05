@@ -6,15 +6,15 @@
 
   <div class="row mt-2">
     <div class="botones col ml-2">
-      <button class="btn btn-danger">Nuevo Juego</button>
-      <button class="btn btn-primary">Pedir carta</button>
-      <button class="btn btn-primary">Detener</button>
+      <button id="btnNuevo" class="btn btn-danger">Nuevo Juego</button>
+      <button id="btnPedir" class="btn btn-primary"  (click)="pedirCarta()">Pedir carta</button>
+      <button id="btnDetener" class="btn btn-primary">Detener</button>
     </div>
   </div>
 
   <div class="row container">
     <div class="col">
-      <h1>Jugador 1 <small>0</small></h1>
+      <h1>Jugador 1 <small>{{ puntosJugador }}</small></h1>
       <div id="jugador-cartas">
         <img class="carta" src="../assets/cartas/10S.png" alt="carta">
         <img class="carta" src="../assets/cartas/10S.png" alt="carta">
@@ -39,4 +39,3 @@
   </div>
 
 </div>
-
