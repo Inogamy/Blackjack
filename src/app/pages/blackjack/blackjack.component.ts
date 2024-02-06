@@ -28,7 +28,6 @@ export class BlackjackComponent {
   constructor(private renderer: Renderer2) {
     this.crearDeck();
     this.deckshuffle = shuffle(this.deck);
-    console.log(this.deckshuffle)
   }
 
   crearDeck = () => {
@@ -65,7 +64,6 @@ export class BlackjackComponent {
     let carta = this.deckshuffle.pop();
     if (carta) {
       this.puntosJugador += this.valorCarta(carta);
-      console.log(this.puntosJugador);
 
       this.agregarCartaAlDOM(carta, 'jugador')
 
@@ -79,7 +77,7 @@ export class BlackjackComponent {
         this.puedePedirCarta = false
       }
     } else {
-      console.log('No hay más cartas en el mazo');
+      alert('No hay más cartas en el mazo');
     }
   }
 
@@ -88,7 +86,6 @@ export class BlackjackComponent {
       let carta = this.deckshuffle.pop();
       if (carta) {
         this.puntosComputadora += this.valorCarta(carta);
-        console.log(this.puntosComputadora);
 
         this.agregarCartaAlDOM(carta, 'computadora')
 
@@ -98,7 +95,7 @@ export class BlackjackComponent {
           setTimeout(() => alert('21, Ganaste'), 1000);
         }
       } else {
-        console.log('No hay más cartas en el mazo');
+        alert('No hay más cartas en el mazo');
       }
       if (puntosminimos > 21) {
         break
