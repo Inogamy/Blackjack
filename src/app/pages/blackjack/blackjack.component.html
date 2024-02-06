@@ -6,34 +6,26 @@
 
   <div class="row mt-2">
     <div class="botones col ml-2">
-      <button id="btnNuevo" class="btn btn-danger">Nuevo Juego</button>
-      <button id="btnPedir" class="btn btn-primary"  (click)="pedirCarta()">Pedir carta</button>
-      <button id="btnDetener" class="btn btn-primary">Detener</button>
+      <button id="btnNuevo" class="btn btn-danger" (click)="juegoNuevo()">Nuevo Juego</button>
+      <button id="btnPedir" class="btn btn-primary"  (click)="pedirCartaJugador()" [disabled]="!puedePedirCarta">Pedir carta</button>
+      <button id="btnDetener" class="btn btn-primary" (click)="finalizarTurno()" [disabled]="!detenerCartas">Detener</button>
     </div>
   </div>
 
   <div class="row container">
     <div class="col">
       <h1>Jugador 1 <small>{{ puntosJugador }}</small></h1>
-      <div id="jugador-cartas">
-        <img class="carta" src="../assets/cartas/10S.png" alt="carta">
-        <img class="carta" src="../assets/cartas/10S.png" alt="carta">
-        <img class="carta" src="../assets/cartas/10S.png" alt="carta">
-        <img class="carta" src="../assets/cartas/10S.png" alt="carta">
-        <img class="carta" src="../assets/cartas/10S.png" alt="carta">
+      <div id="jugador-cartas" #divCartasJugador>
+        <!-- <img class="carta" src="../assets/cartas/10S.png" alt="carta"> -->
       </div>
     </div>
   </div>
 
   <div class="row container mt-3">
     <div class="col mb-4">
-      <h1>Computadora 1 <small>0</small></h1>
-      <div id="computadora-cartas">
-        <img class="carta" src="../assets/cartas/2H.png" alt="carta">
-        <img class="carta" src="../assets/cartas/2H.png" alt="carta">
-        <img class="carta" src="../assets/cartas/2H.png" alt="carta">
-        <img class="carta" src="../assets/cartas/2H.png" alt="carta">
-        <img class="carta" src="../assets/cartas/2H.png" alt="carta">
+      <h1>Computadora 1 <small>{{ puntosComputadora }}</small></h1>
+      <div id="computadora-cartas" #divCartasComputadora>
+
       </div>
     </div>
   </div>

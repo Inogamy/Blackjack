@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { shuffle } from 'underscore';
 
 @Component({
@@ -7,22 +6,29 @@ import { shuffle } from 'underscore';
   standalone: true,
   imports: [],
   templateUrl: './blackjack.component.html',
-  styleUrl: './blackjack.component.css'
+  styleUrls: ['./blackjack.component.css']
 })
 export class BlackjackComponent {
+
+  @ViewChild('divCartasJugador') divCartasJugador!: ElementRef<HTMLDivElement>;
+  @ViewChild('divCartasComputadora') divCartasComputadora!: ElementRef<HTMLDivElement>;
+
+
   deck: string[] = [];
   tipos = ['C', 'D', 'H', 'S'];
-  especiales = ['A', 'J', 'Q', 'F']
+  especiales = ['A', 'J', 'Q', 'K']
   deckshuffle: string[] = [];
 
   puntosJugador = 0;
   puntosComputadora = 0;
 
+  puedePedirCarta: boolean = true;
+  detenerCartas: boolean = true
 
-  constructor() {
+  constructor(private renderer: Renderer2) {
     this.crearDeck();
     this.deckshuffle = shuffle(this.deck);
-    this.valorCarta('AD');
+    console.log(this.deckshuffle)
   }
 
   crearDeck = () => {
@@ -39,29 +45,98 @@ export class BlackjackComponent {
     }
   }
 
-
-
   valorCarta(carta: string) {
-    let valor = carta.substring(0, carta.length - 1)
-    let numeroValor = parseInt(valor, 10);
-
-    return (isNaN(numeroValor)) ?
-      (valor === 'A') ? 11 : 10
-      : numeroValor = numeroValor + 1;
+    let valor = carta.substring(0, carta.length - 1);
+    return isNaN(parseInt(valor)) ? (valor === 'A' ? 11 : 10) : parseInt(valor);
   }
 
 
-  pedirCarta() {
-    let carta = this.deckshuffle.pop()
-    if (carta) { // Verifica que carta no sea undefined.
-      this.puntosJugador += this.valorCarta(carta); // Usa += para sumar el valor a puntosJugador.
+  agregarCartaAlDOM(carta: string, jugador: 'jugador' | 'computadora') {
+    const contenedor = jugador === 'jugador' ? this.divCartasJugador.nativeElement : this.divCartasComputadora.nativeElement;
+    const imgCarta = this.renderer.createElement('img');
+    this.renderer.setAttribute(imgCarta, 'src', `assets/cartas/${carta}.png`);
+    this.renderer.addClass(imgCarta, 'carta');
+    this.renderer.appendChild(contenedor, imgCarta);
+  }
+
+
+
+  pedirCartaJugador() {
+    let carta = this.deckshuffle.pop();
+    if (carta) {
+      this.puntosJugador += this.valorCarta(carta);
       console.log(this.puntosJugador);
+
+      this.agregarCartaAlDOM(carta, 'jugador')
+
+      if (this.puntosJugador > 21) {
+        this.puedePedirCarta = false
+        this.pedirCartaComputadora(this.puntosJugador)
+        // setTimeout(() => alert('Perdiste'), 1000);
+        this.detenerCartas = false
+      } else if (this.puntosJugador === 21) {
+        setTimeout(() => alert('21, Ganaste'), 1000);
+        this.puedePedirCarta = false
+      }
     } else {
       console.log('No hay más cartas en el mazo');
     }
   }
 
+  pedirCartaComputadora(puntosminimos: number) {
+    do {
+      let carta = this.deckshuffle.pop();
+      if (carta) {
+        this.puntosComputadora += this.valorCarta(carta);
+        console.log(this.puntosComputadora);
 
+        this.agregarCartaAlDOM(carta, 'computadora')
+
+        if (this.puntosComputadora > 21) {
+          setTimeout(() => alert(`Ganaste la computadora saco ${this.puntosComputadora}`), 500)
+        } else if (this.puntosComputadora === 21) {
+          setTimeout(() => alert('21, Ganaste'), 1000);
+        }
+      } else {
+        console.log('No hay más cartas en el mazo');
+      }
+      if (puntosminimos > 21) {
+        break
+      }
+    } while ((this.puntosComputadora < puntosminimos) && (puntosminimos <= 21));
+
+    if (puntosminimos === this.puntosComputadora) {
+      setTimeout(() => alert('Nadie gana'), 500)
+
+    } else if (puntosminimos > 21) {
+      setTimeout(() => alert('computadora gana'), 500)
+    }
+
+  }
+
+  finalizarTurno() {
+    this.detenerCartas = false;
+    this.puedePedirCarta = false;
+    this.pedirCartaComputadora(this.puntosJugador);
+    if ((this.puntosJugador < this.puntosComputadora) && (this.puntosJugador < 21) && (this.puntosComputadora < 21)) {
+      setTimeout(() => alert(`Perdiste solo tienes ${this.puntosJugador} puntos y la computadora se acerco mas a 21 con ${this.puntosComputadora}`), 500)
+    }
+  }
+
+  juegoNuevo() {
+    this.detenerCartas = true;
+    this.puedePedirCarta = true;
+    this.puntosJugador = 0;
+    this.puntosComputadora = 0;
+    this.limpiarElemento(this.divCartasComputadora.nativeElement);
+    this.limpiarElemento(this.divCartasJugador.nativeElement);
+  }
+
+  limpiarElemento(elemento: HTMLElement) {
+    while (elemento.firstChild) {
+      this.renderer.removeChild(elemento, elemento.firstChild);
+    }
+  }
 
 }
 
